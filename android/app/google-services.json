@@ -1,0 +1,113 @@
+{
+  "project_info": {
+    "project_number": "50329148783",
+    "project_id": "rykcourier",
+    "storage_bucket": "rykcourier.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:50329148783:android:a28a85ce91fb0d4f751c9a",
+        "android_client_info": {
+          "package_name": "com.rykcourier"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "50329148783-5clfr89ga0e0arek9gr0m4hta94nj78b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rykcourier",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "50329148783-8nb29iommeeh2jfkibn3b7d0ccves771.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_qpKQmBjM0vqt5Oe4vOsujK4DmLrznNs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "50329148783-8nb29iommeeh2jfkibn3b7d0ccves771.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:50329148783:android:e19a628903db6bba751c9a",
+        "android_client_info": {
+          "package_name": "com.rykresturant"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "50329148783-8nb29iommeeh2jfkibn3b7d0ccves771.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_qpKQmBjM0vqt5Oe4vOsujK4DmLrznNs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "50329148783-8nb29iommeeh2jfkibn3b7d0ccves771.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:50329148783:android:b417afd4c2afdac3751c9a",
+        "android_client_info": {
+          "package_name": "com.rykrider"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "50329148783-m000fn5sjvqo87rs29b4nafskq2q3apf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rykrider",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "50329148783-8nb29iommeeh2jfkibn3b7d0ccves771.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_qpKQmBjM0vqt5Oe4vOsujK4DmLrznNs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "50329148783-8nb29iommeeh2jfkibn3b7d0ccves771.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
