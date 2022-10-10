@@ -29,8 +29,9 @@ export function DrawerContent(props) {
                                 color={colors.white}
                             />
                             <View style={{flex:1, justifyContent:"flex-end"}}>
-                                <Title style={styles.title}> @Username</Title>
-                                {user?.phoneNumber ?<Caption style={styles.caption}>{user?.phoneNumber}</Caption>:
+                                {user?.res_name ?<Title style={styles.title}>{user?.res_name}</Title>:
+                                <Title style={styles.title}> @Username</Title>}
+                                {user?.res_email ?<Caption style={styles.caption}>{user?.res_email}</Caption>:
                                 <Caption style={styles.caption}>user_email@gmail.com</Caption>}
                             </View>
                         </View>

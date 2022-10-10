@@ -22,17 +22,21 @@ export default StyleSheet.create({
         fontWeight:'700',
         color:colors.secondary
       },
-      status:{
-        fontSize:18,
-        color:'white',
-        fontWeight:'600',
+      statusRow:{
+        flexDirection:'row',
+        justifyContent:'space-between',
+        alignItems:'center',
         width:wp(100),
         height:40,
-        textAlignVertical:'center',
-        paddingLeft:20,
+        paddingHorizontal:20,
         marginTop:1,
         elevation:10,
         backgroundColor:colors.lightGrey
+      },
+      status:{
+        fontSize:18,
+        color:'grey',
+        fontWeight:'600',
       },
       row:{
         marginVertical:10,
@@ -73,7 +77,7 @@ text:{
 orderCard:{
   paddingHorizontal:15,
   marginHorizontal:10,
-  paddingVertical:15,
+  paddingTop:5,
   marginVertical:8,
   borderRadius:10,
   backgroundColor:'white'
@@ -81,7 +85,7 @@ orderCard:{
 row1:{
   flexDirection:'row',
   justifyContent:'space-between',
-  marginBottom:10,
+  marginVertical:10,
 },
 text1:{
   fontSize:10,
@@ -93,5 +97,24 @@ text2:{
   fontSize:15,
   color:colors.black,
   fontFamily:Fonts.MonSemiBold,
-}
+},
+text3:{
+  marginTop:3,
+  fontSize:14,
+  color:colors.grey,
+  fontFamily:Fonts.MonMedium,
+},
+button:{
+  backgroundColor:colors.primary,
+  height:hp(4),
+  width:wp(40),
+  justifyContent:'center',
+  alignItems:'center',
+  borderRadius:10,
+},
+buttonText:{
+  fontSize:14,
+  color:colors.white,
+  fontFamily:Fonts.MonSemiBold,
+},
 });

@@ -5,6 +5,8 @@ import {
   Platform,
   AlertIOS,
 } from 'react-native';
+import { Clear, setData } from '../AsyncStorageServices';
+import { getAllOfCollectionwhere, saveData } from './firebaseServices';
 
 export const AuthContext = createContext();
 
@@ -38,12 +40,22 @@ export const AuthProvider = ({children}) => {
             changeLoader();
           }
         },
-        logout: async () => {
+        updateUser: async (r_id) => {
           try {
-            await auth().signOut();
+            const newuser = await getAllOfCollectionwhere('resturants', 'r_id',r_id )
+            if(newuser.length > 0)
+            { 
+              setUser(newuser[0]);
+              await setData('user',newuser[0])
+            }
           } catch (e) {
-            console.log(e);
+            ToastAndroid.show("Something went wrong with updating user", ToastAndroid.SHORT);
           }
+        },
+        logout: async () => {
+          await saveData('resturants',user.r_id,{token:'',active:false})
+          await Clear('user');
+          setUser('')
         },
         passwordReset: async (email ) => {
           return await auth().sendPasswordResetEmail(email).then(() =>{

@@ -1,16 +1,7 @@
 import firestore from '@react-native-firebase/firestore';
 export const sendNotification = (to,from, title, message,type) => {
-  firestore()
-    .collection('resturants')
-    // Filter results
-    .where('res_id', '==', to)
-    .get()
-    .then(querySnapshot => {
-      querySnapshot.forEach(documentSnapshot => {
-        var token = documentSnapshot.data().token;
-        if (token) {
           let data= {
-                  to: token,
+                  to: to,
                   notification: {
                     body: message,
                     sound: "default",
@@ -38,9 +29,5 @@ export const sendNotification = (to,from, title, message,type) => {
             .catch(err => {
               console.log('res.status12 error', err);
             });
-        } else {
-          console.log('token not available');
-        }
-      });
-    });
+        
 };

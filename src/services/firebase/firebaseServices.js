@@ -119,7 +119,22 @@ export async function getAllOfCollectionwhere1(collection, key, id) {
   });
   return data;
 }
-
+export async function getAllOfCollectiondoublewhereIn(collection, key,id,key1, idsArray,) {
+  let data = [];
+  let querySnapshot = await firestore()
+    .collection(collection)
+    .where(key, '==', id)
+    .where(key1, 'in', idsArray)
+    .get();
+  querySnapshot.forEach(function (doc) {
+    if (doc.exists) {
+      data.push(doc.data());
+    } else {
+      console.log('No document found!');
+    }
+  });
+  return data;
+}
 export async function getAllOfCollectiondoublewhere(
   collection,
   key,

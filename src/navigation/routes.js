@@ -8,18 +8,32 @@ import { Provider as StoreProvider } from 'react-redux';
 import store from '../services/redux/store/store';
 import DrawerNavigator from './drawerNavigator';
 import HomeScreen from '../screens/homeScreen/homeScreen';
+import { getData } from '../services/AsyncStorageServices';
 const Routes = () => {
-  const {user, setUser} = useContext(AuthContext);
+  const {user, setUser,updateUser} = useContext(AuthContext);
   const [initializing, setInitializing] = useState(true);
 
-  const onAuthStateChanged = user => {
-    setUser(user);
-    if (initializing) setInitializing(false);
-  };
+  // const onAuthStateChanged = user => {
+  //   setUser(user);
+  //   if (initializing) setInitializing(false);
+  // };
 
+  // useEffect(() => {
+  //   const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+  //   return subscriber; // unsubscribe on unmount
+  // }, []);
+
+  const getUser = async()=>{
+    let userDetail = await getData('user');
+    if(userDetail != null){
+      setUser(userDetail)
+      await updateUser(userDetail.r_id);
+    }
+    setInitializing(false)
+
+  }
   useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber; // unsubscribe on unmount
+    getUser()
   }, []);
 
   if (initializing) return null;

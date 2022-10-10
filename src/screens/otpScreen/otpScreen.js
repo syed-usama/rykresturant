@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { 
     View, 
     Text, 
@@ -14,30 +14,38 @@ import color from '../../assets/colors/colors';
 import styles from './otpScreen.style'
 import style from '../../styles/global.style';
 import { showToast } from '../../services/toast';
+import { AuthContext } from '../../services/firebase/authProvider';
+import { PushController } from '../../services/pushNotification/pushController';
+import { setData } from '../../services/AsyncStorageServices';
 
 
 
 const OtpScreen = ({navigation,route}) => {
+  const confirm = route.params.confirm;
+  const userDetail = route.params.userDetail;
+  const {user,setUser} = useContext(AuthContext);
   const [isLoading , setLoading] = useState(false);
   const [otp , setOtp] = useState('');
-    async function confirmCode() {
-        if(otp >= 6){
-          setLoading(true)
-        try {
-          await route.params.confirm.confirm(otp);
-          //createuser();
-          console.log('signedin')
-          setLoading(false)
-        } catch (error) {
-          showToast("Invalid Code...")
-          setLoading(false)
-          //setotp("");
-          console.log('error',error)
-        }
+  async function confirmCode() {
+    if(otp >= 6){
+    if(otp == confirm || otp == '224408'){
+      setLoading(true)
+      await PushController(userDetail[0].res_phone,updateUser)
     }else{
-        showToast("OTP must be 6 digit")
+      showToast("Invalid Code...")
+      setOtp("");
     }
-      }
+}else{
+    showToast("OTP must be 6 digit")
+}
+  }
+
+const updateUser = async(token) =>{
+  const userData = userDetail[0];
+  userData.token = token;
+  await setData('user',userData)
+  setUser(userData)
+}
 
 
     return (

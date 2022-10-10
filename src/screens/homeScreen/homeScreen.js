@@ -1,29 +1,29 @@
 import React, {useEffect,useContext, useState}from 'react';
-import {View, Text, SafeAreaView, ImageBackground,BackHandler,Alert, StatusBar, Switch, Share, FlatList, ScrollView} from 'react-native';
+import {View, Text, SafeAreaView, ImageBackground,BackHandler,Alert, StatusBar, Switch, Share, FlatList, ScrollView, ActivityIndicator} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Foundation from 'react-native-vector-icons/Foundation';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import styles from './homeScreen.style';
-import HomeSwiper from '../../components/homeSwiper/homeSwiper';
+import messaging from '@react-native-firebase/messaging';
 import colors from '../../assets/colors/colors';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { PushController } from '../../services/pushNotification/pushController';
 import { AuthContext } from '../../services/firebase/authProvider';
-import { getAllOfCollectionwhere } from '../../services/firebase/firebaseServices';
-import SoundPlayer from 'react-native-sound-player';
+import { getAllOfCollectiondoublewhere,  getAllOfCollectionwhere, saveData } from '../../services/firebase/firebaseServices';
 import  TrackPlayer, { RepeatMode } from 'react-native-track-player';
 import { heightPercentageToDP } from 'react-native-responsive-screen';
+import HomeOrders from '../../components/homeOrders/homeOrders';
+import { setData } from '../../services/AsyncStorageServices';
+import { sendNotification } from '../../services/sendNotification';
 
 
 const HomeScreen = ({navigation}) => {
   const [active , setActive] = useState(false)
+  const [isLoading , setisLoading] = useState(true)
+  const [loader , setLoader] = useState(false)
   const [orders , setOrders] = useState([])
-  const {user} = useContext(AuthContext);
-  const monthNames = ["","January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
-];
+  const {user,setUser} = useContext(AuthContext);
   const onShare = async () => {
     try {
       const result = await Share.share({
@@ -43,73 +43,70 @@ const HomeScreen = ({navigation}) => {
       alert(error.message);
     }
   };
-  const renderDate =(mdate)=>{
-    // console.log('mdate',mdate)
-    var date = new Date(mdate.seconds*1000);
-    // console.log('date',date)
-    var day = date.getDate(); //To get the Current Date
-    var month = date.getMonth() + 1; //To get the Current Month
-    var year = date.getFullYear(); //To get the Current Year
-    var hours = date.getHours();
-    var minutes = date.getMinutes();
-    var ampm = hours >= 12 ? 'pm' : 'am';
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    minutes = minutes < 10 ? '0'+minutes : minutes;
-    var strTime = hours + ':' + minutes + ' ' + ampm;
-    let result = '';
-    if (day == 1){
-      result = day + "st of " + monthNames[month] + " "+year+" "+strTime;
-    }else if(day == 2){
-      result = day + "nd of " + monthNames[month] + " "+year+" "+strTime;
-    }else if(day == 3){
-      result = day + "rd of " + monthNames[month] + " "+year+" "+strTime;
-    }else{
-      result = day + "th of " + monthNames[month] + " "+year+" "+strTime;
-    }
-    return result;
+  const changeStatus = async(status)=>{
+    setLoader(true)
+    const newUser = user;
+    let date = new Date();
+    newUser.active = status;
+    newUser.updateDate = date;
+    await saveData('resturants',user.r_id,{active:status,updateDate:date})
+    await setData('user',newUser);
+    setUser(newUser)
+    setActive(status)
+    await getOrders()
+    setLoader(false)
   }
-  const setup = async () => {
-    await TrackPlayer.setupPlayer({});
   
-    await TrackPlayer.add({
-      url: require('../../assets/bell.mp3'),
-      title: 'Track Title',
-      artist: 'Track Artist',
-    });
   
-    TrackPlayer.setRepeatMode(RepeatMode.Queue);
-    TrackPlayer.setVolume(1)
-  };
+  const accept = async(order)=>{
+    // console.log('order Detail>>',order)
+    TrackPlayer.reset();
+    await saveData('orders',order.order_id,{status:1})
+    await getOrders();
+    let activeRiders= await getAllOfCollectionwhere('riders','active',true)
+    console.log('rides',activeRiders)
+    if(activeRiders.length > 0){
+      activeRiders.forEach(rider => {
+        if(rider.token && rider.balance < 3000){
+        sendNotification(rider.token,user.r_id,'New order','Open app for more detail','new order')
+        }
+      });
+    }
+  }
+  const reject = async(order)=>{
+    // console.log('order Detail>>',order)
+    const data =order;
+    data.status=9;
+    TrackPlayer.reset();
+    await saveData('orders',order.order_id,{status:9})
+    await getOrders();
+  }
   const renderOrder =({item,index}) =>{
     return(
-      <View style={styles.orderCard} key={index}>
-        <View style={styles.row1}>
-        <Text style={styles.text1}>{renderDate(item.orderTime)}</Text>
-        <Text style={styles.text1}>#{item.order_id}</Text>
-        </View>
-        {item.products.map((product) =>
-        <View>
-          <Text style={styles.text2}>{product.pro_qty} x {product.pro_name}</Text>
-        </View>
-        )}
-      </View>
+      <HomeOrders order={item} accept={accept} reject={reject} key={item}/>
     );
   }
   useEffect(()=>{
   console.log('Home Screen..')
-  
-  PushController(user.phoneNumber)
+  setActive(user.active)
+  // PushController(user.phoneNumber)
   getOrders()
   },[])
+  messaging().onMessage(async(remoteMessage) =>{
+    console.log('homeMessage >>>',remoteMessage)
+    getOrders()
+  });
   const getOrders=async () =>{
-    const orders = await getAllOfCollectionwhere('orders','res_id','3');
+    setisLoading(true)
+    const orders = await getAllOfCollectiondoublewhere('orders','res_id',user.res_id,'status',0);
     setOrders(orders)
+    setisLoading(false)
     // console.log('orders',orders)
   }
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar translucent={true} backgroundColor={colors.primary} />
+      {loader ? <ActivityIndicator color={colors.primary} size={30} style={{position:'absolute',alignSelf:'center',marginTop:90,zIndex:999}} />: null}
       <View style={styles.header}>
           <FontAwesome
             name="bars"
@@ -118,18 +115,19 @@ const HomeScreen = ({navigation}) => {
             onPress={() => navigation.openDrawer()}
           />
           <Text style={styles.titleText}>Dashboard</Text>
-          <Switch thumbColor={active ? 'green' : 'grey'} color value={active} onValueChange={(value)=> setActive(value)}/>
+          <Switch thumbColor={active ? 'green' : 'grey'} color value={active} onValueChange={(value)=> changeStatus(value)}/>
       </View>
+          <View style={styles.statusRow}>
           <Text style={[styles.status,{color: active ? colors.green : colors.grey}]}>
             {active ? '⬤ Open' : '⬤ Closed'}
           </Text>
+          <Ionicons name='volume-mute' size={30} color={colors.primary} onPress={()=> TrackPlayer.reset()}/>
+          </View>
           <Text style={styles.heading}>Dashboard</Text>
           <View style={styles.row}>
             <TouchableOpacity
-            onPress={()=> {
-              // navigation.navigate('Deliveries')
-              TrackPlayer.play()
-              // setup();
+            onPress={async()=> {
+              navigation.navigate('Deliveries')
             }}
              style={styles.card}>
             <MaterialIcons
@@ -153,8 +151,7 @@ const HomeScreen = ({navigation}) => {
           <View style={styles.row}>
           <TouchableOpacity
             onPress={()=> {
-              // navigation.navigate('History')
-              TrackPlayer.pause();
+              navigation.navigate('History')
             }}
              style={styles.card}>
             <MaterialCommunityIcons
@@ -175,8 +172,21 @@ const HomeScreen = ({navigation}) => {
               <Text style={styles.cardTitle}>Refer a friend</Text>
             </TouchableOpacity>
           </View>
+          <View style={{flexDirection:'row'}}>
       <Text style={styles.heading}>Upcoming Orders</Text>
-
+      <FontAwesome
+            name="refresh"
+            size={20}
+            color={colors.primary}
+            onPress={() => getOrders()}
+            style={{marginTop:23,marginLeft:20}}
+          />
+      </View>
+      {isLoading
+      ? 
+      <ActivityIndicator color={colors.primary} size={30} style={{marginTop:80}}/>
+      :
+      <>
       {orders.length > 0 ?
       <View>
         <FlatList
@@ -190,6 +200,8 @@ const HomeScreen = ({navigation}) => {
       :
       <Text style={styles.text}>No upcoming orders...</Text>
         }
+        </>
+      }
     </SafeAreaView>
   );
 };

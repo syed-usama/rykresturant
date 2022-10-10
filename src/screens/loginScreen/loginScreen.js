@@ -19,6 +19,9 @@ import styles from './loginScreen.style'
 import style from '../../styles/global.style';
 import { AuthContext } from '../../services/firebase/authProvider';
 import { colors } from 'react-native-elements';
+import { getAllOfCollectionwhere } from '../../services/firebase/firebaseServices';
+import axios from 'axios';
+import { showToast } from '../../services/toast';
 
 
 
@@ -52,7 +55,45 @@ const LoginScreen = ({navigation}) => {
           setLoading(false);
         }   
     }
+    }
+      const getUser = async() =>{
+
+        if(data.isValidUser && data.check_textInputChange){
+            setLoading(true)
+        // const phone = data.phoneNumber;
+        let phone = data.phoneNumber.replace("+920", "+92");
+        let user_data = await getAllOfCollectionwhere('resturants','res_phone',phone)
+        console.log('data>>>',user_data)
+        if(user_data.length > 0){
+            sendCode(user_data)
+        }else{
+            showToast('Invalid User')
+            setLoading(false)
+        }
+        }
       }
+      const sendCode =(userDetail) => {
+        if(data.isValidUser && data.check_textInputChange){
+        // const phone = data.phoneNumber;
+        let phone = data.phoneNumber.replace("+920", "+92");
+          let confirmation = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
+          setConfirm(confirmation);
+          console.log("confirmation =", confirmation);
+          let url = "https://otp-verify-ejd76ds5ka-ue.a.run.app/send-otp/"+phone+"/" +confirmation;
+          axios.post(url)
+            .then(async response => {
+              console.log("otp code Sent", response.data);
+              if(response.data.status){
+                navigation.navigate('OtpScreen',{confirm:confirmation,userDetail:userDetail});
+              }
+              setLoading(false);
+            })
+            .catch((err) => {
+              console.log("error", err);
+              setLoading(false);
+            });
+        }
+        }
     const textInputChange = (val) => {
         if(val.length >= 13) {
             setData({
@@ -168,7 +209,7 @@ const LoginScreen = ({navigation}) => {
             <View style={styles.button}>
                 <TouchableOpacity
                     style={styles.signIn}
-                    onPress={()=> signInWithPhoneNumber()}
+                    onPress={()=> getUser()}
                 >
                 <LinearGradient
                     colors={[color.white, color.white]}

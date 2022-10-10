@@ -1,12 +1,17 @@
 import React, { useContext, useEffect, useState } from 'react';
-import {View, Text, SafeAreaView, StatusBar, TouchableOpacity} from 'react-native';
+import {View, Text, SafeAreaView, StatusBar, TouchableOpacity,ActivityIndicator,FlatList} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {AuthContext} from '../../services/firebase/authProvider';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import styles from './history.style';
 import colors from '../../assets/colors/colors';
+import { heightPercentageToDP } from 'react-native-responsive-screen';
+import OrderComponent from '../../components/orderComponent/orderComponent';
+import { getAllOfCollectiondoublewhereIn } from '../../services/firebase/firebaseServices';
 const History = ({navigation}) => {
     const {user} = useContext(AuthContext);
+    const [orders, setOrders] = useState([]);
+    const [isLoading , setisLoading] = useState(true);
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [date ,setDate] = useState('Aug 2022');
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -29,9 +34,21 @@ const History = ({navigation}) => {
     // console.log('date',selDate)
     setDate(seleDate)
   };
-    useEffect(() => {
-        //console.log(user);
-    },[])
+  const renderOrder =({item,index}) =>{
+    return(
+      <OrderComponent orders={item} accept={false}  key={item.order_id} />
+    );
+  }
+  useEffect(() => {
+      //console.log(user);
+      getOrders()
+  },[])
+  const getOrders=async () =>{
+    const orders = await getAllOfCollectiondoublewhereIn('orders','res_id',user.res_id,'status',[2,3,4,5,6]);
+    setOrders(orders)
+    setisLoading(false);
+    // console.log('orders',orders)
+  }
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar translucent={true} backgroundColor={colors.primary} />
@@ -62,11 +79,29 @@ const History = ({navigation}) => {
             color={colors.black}
             style={{alignSelf:'center',marginTop:4}}
           />
-          <Text style={styles.textT2}>0</Text>
+          <Text style={styles.textT2}>{orders.length}</Text>
+          {orders.length > 0 ?
+      <View>
+        <FlatList
+        data={orders}
+        style={{marginTop:0,height:heightPercentageToDP(90),}}
+        showsVerticalScrollIndicator={false}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={renderOrder}
+        />
+      </View>
+      :
       <View style={{flex:0.8,justifyContent:'center'}}>
+        {isLoading ? 
+        <ActivityIndicator color={colors.primary} size={40} style={{alignSelf:'center'}}/>
+      :
+      <>
           <Text style={styles.comingSoon}>There's no recent orders</Text>
           <Text style={styles.back}>Check other dates to see recent orders</Text>
-          </View>
+      </>
+        }
+       </View>
+      }
           <DateTimePickerModal
         isVisible={isDatePickerVisible}
         mode="date"

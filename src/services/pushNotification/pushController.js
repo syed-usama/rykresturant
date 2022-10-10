@@ -2,7 +2,7 @@ import messaging from '@react-native-firebase/messaging';
 import firestore from "@react-native-firebase/firestore";
 import { Alert } from 'react-native';
 
-export const PushController = async (phone) => {
+export const PushController = async (phone,updateUser) => {
   const authStatus = await messaging().requestPermission();
   const enabled =
     authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
@@ -14,6 +14,7 @@ export const PushController = async (phone) => {
     }
   if (enabled) {
     messaging().getToken().then((token) => {
+      updateUser(token)
       console.log('Authorization status:', token);
       firestore()
         .collection('resturants')
