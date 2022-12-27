@@ -61,9 +61,9 @@ const OrderComponent = ({orders,accept}) => {
           {orders.products.map((product,index) =>
           <View key={index}>
             <Text style={styles.text2}>{product.pro_qty} x {product.pro_name}</Text>
+            {product.pro_instructions ? <Text style={styles.text3}> {'~>'} ( User note : {product.pro_instructions})</Text>:null}
           </View>
           )}
-          <Text style={styles.text3}>User note : {orders.user_note}</Text>
           {accept ?
             <TouchableOpacity style={styles.button} onPress={()=> confirmAlert(orders)}>
             {loader ? 

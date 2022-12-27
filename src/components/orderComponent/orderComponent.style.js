@@ -30,8 +30,8 @@ export default StyleSheet.create({
       },
       text3:{
         marginTop:3,
-        fontSize:14,
-        color:colors.grey,
+        fontSize:12,
+        color:colors.black,
         fontFamily:Fonts.MonMedium,
       },
       button:{
