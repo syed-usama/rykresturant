@@ -9,6 +9,7 @@ import History from "../screens/history/history";
 import Wallet from "../screens/wallet/wallet";
 import Notifications from "../screens/notifications/notifications";
 import OtpScreen from "../screens/otpScreen/otpScreen";
+import StoreSupport from "../screens/storeSupport/storeSupport";
 // import FoodScreen from "../screens/rykfoods/foodScreen/foodScreen";
 // import CartScreen from "../screens/rykfoods/cartScreen/cartScreen";
 // import ProductScreen from "../screens/rykfoods/productScreen/productScreen";
@@ -43,6 +44,7 @@ const DrawerStack = () => {
           <Stack.Screen name="History" component={History} />
           <Stack.Screen name="Wallet" component={Wallet} />
           <Stack.Screen name="Notifications" component={Notifications} />
+          <Stack.Screen name="StoreSupport" component={StoreSupport} />
     </Stack.Navigator>
   );
 }

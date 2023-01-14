@@ -28,11 +28,13 @@ const setup = async () => {
       title: 'Track Title',
       artist: 'Track Artist',
     });
+    TrackPlayer.setRepeatMode(RepeatMode.Queue);
     TrackPlayer.play()
   }
 };
 messaging().onMessage(async(remoteMessage) =>{
  await setup();
+ console.log('onmessage!', remoteMessage);
 });
 messaging().setBackgroundMessageHandler(async (remoteMessage) => {
  await setup();

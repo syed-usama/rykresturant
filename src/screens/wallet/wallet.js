@@ -9,17 +9,18 @@ import {
   ActivityIndicator
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import Feather from 'react-native-vector-icons/Feather';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {AuthContext} from '../../services/firebase/authProvider';
 import styles from './wallet.style';
 import colors from '../../assets/colors/colors';
 import { heightPercentageToDP } from 'react-native-responsive-screen';
-import { getAllOfCollectiondoublewhereIn } from '../../services/firebase/firebaseServices';
+import { getAllOfCollectiondoublewhereIn, getAllOfCollectionwhere } from '../../services/firebase/firebaseServices';
 const Wallet = ({navigation}) => {
   const {user} = useContext(AuthContext);
   const [orders, setOrders] = useState([]);
   const [isLoading , setisLoading] = useState(true);
+  const [balance, setBalance]=useState(0);
   const monthNames = [
     '',
     'Jan',
@@ -62,6 +63,23 @@ const Wallet = ({navigation}) => {
     return result;
   };
   const renderOrder =({item,index}) =>{
+    if(item.user_type == 'Restaurant'){
+      return(     
+    <View style={styles.row}>
+      <AntDesign
+        name="download"
+        size={25}
+        color={colors.primary}
+      />
+      <View style={styles.detail}>
+        <Text style={styles.title}>Cash in</Text>
+        <Text style={styles.textT4}>{item.tr_id}</Text>
+        <Text style={styles.date}>{renderDate(item.orderTime)}</Text>
+      </View>
+      <Text style={styles.textT5}>{item.amount}.00 PKR</Text>
+    </View>
+      );
+    }else{
     return(
       <View style={styles.row}>
       <MaterialIcons
@@ -74,9 +92,10 @@ const Wallet = ({navigation}) => {
         <Text style={styles.textT4}>{item.order_id}</Text>
         <Text style={styles.date}>{renderDate(item.orderTime)}</Text>
       </View>
-      <Text style={styles.textT5}>{item.order_amount-200}.00 PKR</Text>
+      <Text style={styles.textT5}>{item.order_amount}.00 PKR</Text>
     </View>
     );
+    }
   }
   useEffect(() => {
     // console.log(user);
@@ -84,8 +103,28 @@ const Wallet = ({navigation}) => {
 },[])
 const getOrders=async () =>{
   const orders = await getAllOfCollectiondoublewhereIn('orders','res_id',user.res_id,'status',[2,3,4,5,6]);
-  setOrders(orders)
-  setisLoading(false);
+  const transactions = await getAllOfCollectionwhere('transactions','user_id',user.res_id);
+      var allorders = [...orders, ...transactions];
+      var filteredArray = allorders.filter((order)=>{
+        var date = new Date(order.orderTime.seconds * 1000);
+        order.time = date;
+        return order;
+      })
+      filteredArray.sort((a, b) => b.time - a.time);
+      // let sortedOrders = filteredArray.sort((a, b) => new Date(...a.time.split('/').reverse()) - new Date(...b.time.split('/').reverse()));
+      setOrders(filteredArray)
+      let bal = 0;
+  orders.filter(element => {
+    bal = element.order_amount + bal;
+  });
+  let deb = 0;
+  transactions.filter(element => {
+    deb = parseInt(element.amount)+deb;
+  });
+  let totalBalance = bal-deb
+
+  setBalance(totalBalance);
+      setisLoading(false);
   // console.log('orders',orders)
 }
   return (
@@ -102,7 +141,7 @@ const getOrders=async () =>{
         <Text style={styles.titleText}></Text>
       </View>
       <Text style={styles.textT1}>Current balance</Text>
-      <Text style={styles.textT2}> {user.balance}.34 PKR</Text>
+      <Text style={styles.textT2}> {balance}.00 PKR</Text>
       <View style={styles.divider}></View>
       <Text style={styles.textT3}>Recent Transactions</Text>
       {/* <View style={styles.row}>
@@ -122,7 +161,7 @@ const getOrders=async () =>{
       <View>
         <FlatList
         data={orders}
-        style={{marginTop:0,height:heightPercentageToDP(90),}}
+        style={{marginTop:0,height:heightPercentageToDP(73),}}
         showsVerticalScrollIndicator={false}
         keyExtractor={(item, index) => index.toString()}
         renderItem={renderOrder}

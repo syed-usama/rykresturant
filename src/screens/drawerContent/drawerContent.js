@@ -72,7 +72,7 @@ export function DrawerContent(props) {
                                 label="Deliveries"
                                 onPress={() => {props.navigation.navigate('Deliveries')}}
                             /> */}
-                            <DrawerItem 
+                            {/* <DrawerItem 
                                 icon={({color, size}) => (
                                     <Iconn 
                                     name="ios-notifications-sharp" 
@@ -82,7 +82,7 @@ export function DrawerContent(props) {
                                 )}
                                 label="Notifications"
                                 onPress={() => {props.navigation.navigate('Notifications')}}
-                            />
+                            /> */}
                             <DrawerItem 
                                 icon={({color, size}) => (
                                     <Icon 
@@ -94,7 +94,7 @@ export function DrawerContent(props) {
                                 label="Wallet"
                                 onPress={() => {props.navigation.navigate('Wallet')}}
                             />
-                            <DrawerItem 
+                            {/* <DrawerItem 
                                 icon={({color, size}) => (
                                     <Iconn 
                                     name="settings-sharp" 
@@ -103,7 +103,7 @@ export function DrawerContent(props) {
                                     />
                                 )}
                                 label="Settings"
-                            />
+                            /> */}
                             <DrawerItem 
                                 icon={({color, size}) => (
                                     <Icon 
@@ -113,6 +113,8 @@ export function DrawerContent(props) {
                                     />
                                 )}
                                 label="Support"
+                                onPress={() => {props.navigation.navigate('StoreSupport')}}
+                                
                             />
                         </Drawer.Section>
                         </DrawerContentScrollView>

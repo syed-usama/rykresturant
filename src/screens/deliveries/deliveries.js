@@ -13,10 +13,10 @@ const Deliveries = ({navigation}) => {
     const [isLoading , setisLoading] = useState(true);
     const accept = async(order)=>{
       // console.log('order Detail>>',order)
-      var newbalance = user.balance+order.order_amount;
-      newbalance = newbalance-200;
+      // var newbalance = user.balance+order.order_amount;
+      // newbalance = newbalance;
       await saveData('orders',order.order_id,{status:3})
-      await saveData('resturants',user.r_id,{balance:newbalance})
+      // await saveData('resturants',user.r_id,{balance:newbalance})
       await updateUser(user.r_id);
       await getOrders();
     }

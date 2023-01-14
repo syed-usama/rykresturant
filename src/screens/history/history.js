@@ -84,7 +84,7 @@ const History = ({navigation}) => {
       <View>
         <FlatList
         data={orders}
-        style={{marginTop:0,height:heightPercentageToDP(90),}}
+        style={{marginTop:0,height:heightPercentageToDP(75),}}
         showsVerticalScrollIndicator={false}
         keyExtractor={(item, index) => index.toString()}
         renderItem={renderOrder}
