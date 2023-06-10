@@ -79,7 +79,8 @@ const LoginScreen = ({navigation}) => {
           let confirmation = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
           setConfirm(confirmation);
           console.log("confirmation =", confirmation);
-          let url = "https://otp-verify-ejd76ds5ka-ue.a.run.app/send-otp/"+phone+"/" +confirmation;
+        //   let url = "https://otp-verify-ejd76ds5ka-ue.a.run.app/send-otp/"+phone+"/" +confirmation;
+          let url = "https://api.veevotech.com/sendsms?hash=51eaf27159719810307e7d4a8b4c20b6&receivenum="+phone+"&sendernum=8583&textmessage=Your login authentication code is "+confirmation;
           axios.post(url)
             .then(async response => {
               console.log("otp code Sent", response.data);
